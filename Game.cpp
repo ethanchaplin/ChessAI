@@ -133,7 +133,7 @@ void Game::drawPieces() {
 
             }
 
-            QString qstr = QString::fromStdString("C:\\Users\\coold\\Documents\\ChessAI\\" + name + color + ".png");
+            QString qstr = QString::fromStdString("C:\\Users\\coold\\Documents\\ChessAI\\assets\\" + name + color + ".png");
             QImage image(qstr);
             image = image.scaled(50, 50);
 
