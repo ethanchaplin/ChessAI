@@ -96,7 +96,7 @@ MainWindow * Game::getWindow() {
 void Game::drawPieces() {
     QGraphicsScene * scene = new QGraphicsScene;
 
-    QGraphicsPixmapItem * bg = new QGraphicsPixmapItem(QPixmap::fromImage(QImage("C:\\Users\\coold\\Documents\\ChessAI\\board.png")));
+    QGraphicsPixmapItem * bg = new QGraphicsPixmapItem(QPixmap::fromImage(QImage("C:\\Users\\coold\\Documents\\ChessAI\\assets\\board.png")));
 
     for (int square = 0; square < 64; square++) {
         if (board -> getPieces()[square] != nullptr) {
