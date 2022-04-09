@@ -404,7 +404,7 @@ void Board::computeAllPiecesLegalMove() {
                             if (temp != nullptr) {
                                 if (temp -> getColor() == currPiece -> getColor()) {
                                     for (int j = 0; j < (int) temp -> getLegalMoves().size(); j++) {
-                                        if ((std::find(bCheckMoves.begin(), bCheckMoves.end(), j) != bCheckMoves.end())) {
+                                        if ((std::find(bCheckMoves.begin(), bCheckMoves.end(), temp->getLegalMoves()[j]) != bCheckMoves.end())) {
                                             newMoves.push_back(temp -> getLegalMoves()[j]);
                                         }
 
@@ -475,3 +475,4 @@ void Board::addCheckMoves(Piece::Color attackingPiece, int pos) {
         wCheckMoves.push_back(pos);
     }
 }
+

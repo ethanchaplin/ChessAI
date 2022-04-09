@@ -18,10 +18,11 @@
 
 #include <algorithm>
 
-
+#include "PieceItem.h"
 Game::Game(Mode mode, MainWindow * mw) {
     board = new Board();
     this -> mw = mw;
+    this -> basicScene = new QGraphicsScene();
 
     switch (mode) {
     case NORMAL:
@@ -75,6 +76,7 @@ Game::Game(Mode mode, MainWindow * mw) {
 Game::~Game() {
     delete board;
     delete mw;
+    delete basicScene;
 }
 
 void Game::start() {
@@ -92,11 +94,12 @@ Board * Game::getBoard() {
 MainWindow * Game::getWindow() {
     return mw;
 }
+void Game::initScene(){
 
+}
 void Game::drawPieces() {
-    QGraphicsScene * scene = new QGraphicsScene;
+    QGraphicsScene * scene = basicScene;
 
-    QGraphicsPixmapItem * bg = new QGraphicsPixmapItem(QPixmap::fromImage(QImage("C:\\Users\\coold\\Documents\\ChessAI\\assets\\board.png")));
 
     for (int square = 0; square < 64; square++) {
         if (board -> getPieces()[square] != nullptr) {
@@ -137,11 +140,48 @@ void Game::drawPieces() {
             QImage image(qstr);
             image = image.scaled(50, 50);
 
-            QGraphicsPixmapItem * item = new QGraphicsPixmapItem(QPixmap::fromImage(image));
+            QGraphicsPixmapItem * item = new PieceItem(QPixmap::fromImage(image), currPiece, this);
+            item -> setFlags({QGraphicsItem::ItemIsSelectable, QGraphicsItem::ItemIsMovable});
+
+
             item -> setZValue(10);
-            item -> setPos(1 + (50 * currPiece -> getXPos()), 1 + (50 * currPiece -> getYPos()));
-            scene -> addItem(item);
+            item -> setPos((50 * currPiece -> getXPos()), (50 * currPiece -> getYPos()));
+            scene->addItem(item);
+
+
         }
     }
-    mw -> updateUI(scene);
+
+    mw->updateUI(basicScene);
+
+}
+void Game::showPieceMoves(Piece * currPiece){
+    clearPieceMoves();
+
+
+    for(int i = 0; i < (long)currPiece->getLegalMoves().size(); i++){
+        int x = currPiece->getLegalMoves()[i] % 8;
+        int y = currPiece->getLegalMoves()[i] / 8;
+
+        QGraphicsEllipseItem * circle = new QGraphicsEllipseItem(12.5, 12.5, 25, 25);
+
+        circle -> setZValue(10);
+        circle -> setPos((50 * x), (50 * y));
+        circle -> setBrush(QBrush(Qt::black, Qt::BrushStyle::Dense7Pattern));
+        basicScene->addItem(circle);
+    }
+    mw->updateUI(basicScene);
+}
+
+void Game::clearPieceMoves(){
+    foreach (QGraphicsItem *item, basicScene->items()) {
+        QGraphicsEllipseItem *node = qgraphicsitem_cast<QGraphicsEllipseItem*>(item);
+        if (!node) // it was NOT an QGraphicsEllipseItem item, so skip it
+            continue;
+        else{
+          basicScene->removeItem(node); // take it out ( wont delete, see docs)
+          delete node; // delete it
+    }
+        }
+    mw->updateUI(basicScene);
 }

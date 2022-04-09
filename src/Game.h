@@ -19,7 +19,7 @@
 #include "qgraphicsview.h"
 
 #include "chess.h"
-
+#include <vector>
 class Game {
     public:
         enum Mode {
@@ -35,9 +35,13 @@ class Game {
     void start();
     Board * getBoard();
     void drawPieces();
+    void initScene();
+    void showPieceMoves(Piece * currPiece);
+    void clearPieceMoves();
     private:
         Board * board;
     MainWindow * mw;
+    QGraphicsScene * basicScene;
 };
 
 #endif /* GAME_H_ */

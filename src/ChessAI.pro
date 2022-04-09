@@ -14,6 +14,7 @@ SOURCES += \
     Board.cpp \
     Game.cpp \
     Piece.cpp \
+    PieceItem.cpp \
     main.cpp \
     chess.cpp
     Board.cpp
@@ -24,6 +25,7 @@ HEADERS += \
     Board.h \
     Game.h \
     Piece.h \
+    PieceItem.h \
     chess.h
     Board.h
     Game.h

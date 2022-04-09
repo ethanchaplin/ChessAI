@@ -27,7 +27,6 @@ class Board {
     Turn getTurn();
     void changeTurn();
     void addCheckMoves(Piece::Color attackingPiece, int pos);
-
     private:
         Piece * pieceLocations[64];
     Turn turn = T_WHITE;

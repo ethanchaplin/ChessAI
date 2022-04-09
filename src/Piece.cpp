@@ -28,6 +28,11 @@ void Piece::move(int square) {
 void Piece::setCompositePosition(int pos) {
     this -> pos = pos;
 }
+
+void Piece::setCompositePosition(int x, int y) {
+    this -> pos = (8 * y) + x;
+}
+
 Piece::Color Piece::getColor() {
     return color;
 }
@@ -69,3 +74,8 @@ std::vector < int > Piece::getLegalMoves() {
 bool Piece::hasPreviouslyMoved() {
     return hasMoved;
 }
+
+void Piece::setType(Type type){
+    this->type = type;
+}
+

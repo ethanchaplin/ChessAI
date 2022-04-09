@@ -15,14 +15,17 @@ MainWindow::MainWindow(QWidget * parent): QMainWindow(parent), ui(new Ui::MainWi
 
 MainWindow::~MainWindow() {
     delete ui;
+    delete scene;
 }
 void MainWindow::resizeEvent(QResizeEvent * event) {
     view -> fitInView(0, 0, 400, 400, Qt::KeepAspectRatio);
-
+    QMainWindow::resizeEvent(event);
 }
 
 void MainWindow::showEvent(QShowEvent * event) {
     view -> fitInView(0, 0, 400, 400, Qt::KeepAspectRatio);
+
+    QMainWindow::showEvent(event);
 }
 
 void MainWindow::updateUI(QGraphicsScene * scene) {
@@ -45,4 +48,8 @@ void MainWindow::initUI() {
 
     view -> show();
 
+}
+
+QGraphicsScene * MainWindow::getScene(){
+    return scene;
 }

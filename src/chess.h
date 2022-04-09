@@ -22,6 +22,7 @@ class MainWindow: public QMainWindow {
     void resizeEvent(QResizeEvent * event);
     void showEvent(QShowEvent * event);
     void updateUI(QGraphicsScene * scene);
+    QGraphicsScene * getScene();
     void initUI();
     private:
         Ui::MainWindow * ui;

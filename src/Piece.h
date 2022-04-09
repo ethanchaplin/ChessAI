@@ -35,6 +35,7 @@ class Piece {
     void setXPos(int x);
     void setYPos(int y);
     void setCompositePosition(int pos);
+    void setCompositePosition(int x, int y);
     int getXPos();
     int getYPos();
     int getCompositePosition();
@@ -42,6 +43,8 @@ class Piece {
     void populateLegalMoves(std::vector < int > moves);
 
     bool hasPreviouslyMoved();
+
+    void setType(Type type);
     private:
         Color color;
     Type type;
