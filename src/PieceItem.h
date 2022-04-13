@@ -2,6 +2,7 @@
 #define PIECEITEM_H
 
 #include <QGraphicsPixmapItem>
+#include <QGraphicsPixmapItem>
 #include "Piece.h"
 #include "Game.h"
 class PieceItem : public QGraphicsPixmapItem
@@ -11,6 +12,7 @@ public:
     void mousePressEvent(QGraphicsSceneMouseEvent * event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent * event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent * event);
+    Piece* getPiece();
     ~PieceItem();
 private:
 

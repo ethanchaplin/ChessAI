@@ -12,6 +12,7 @@ Piece::Piece(Color color, Type type, int pos) {
     this -> color = color;
     this -> type = type;
     this -> pos = pos;
+    previousPos = -1;
 
 }
 
@@ -20,7 +21,7 @@ Piece::~Piece() {
 }
 
 void Piece::move(int square) {
-    hasMoved = true;
+    previousPos = this->pos;
     setCompositePosition(square);
 
 }
@@ -72,10 +73,20 @@ std::vector < int > Piece::getLegalMoves() {
 }
 
 bool Piece::hasPreviouslyMoved() {
-    return hasMoved;
+    return (previousPos != -1);
 }
 
 void Piece::setType(Type type){
     this->type = type;
 }
+
+int Piece::getPreviousPos(){
+    return previousPos;
+}
+
+void Piece::setPreviousPosition(int square){
+    previousPos = square;
+}
+
+
 

@@ -17,9 +17,9 @@
 #include "qgraphicsscene.h"
 
 #include "qgraphicsview.h"
-
 #include "chess.h"
 #include <vector>
+
 class Game {
     public:
         enum Mode {
@@ -27,6 +27,9 @@ class Game {
             CHESS960,
             RANDOM
         };
+
+
+
     Game(Mode mode, MainWindow * mw);
 
     virtual~Game();
@@ -35,13 +38,13 @@ class Game {
     void start();
     Board * getBoard();
     void drawPieces();
-    void initScene();
+    void refreshPieces();
     void showPieceMoves(Piece * currPiece);
     void clearPieceMoves();
     private:
         Board * board;
     MainWindow * mw;
-    QGraphicsScene * basicScene;
+
 };
 
 #endif /* GAME_H_ */

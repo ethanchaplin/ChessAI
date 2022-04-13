@@ -40,10 +40,10 @@ void MainWindow::initUI() {
     QImage image("C:\\Users\\coold\\Documents\\ChessAI\\assets\\board.png");
     image = image.scaled(400, 400);
 
-    QGraphicsPixmapItem * item = new QGraphicsPixmapItem(QPixmap::fromImage(image));
 
-    scene -> addItem(item);
 
+
+    view->setBackgroundBrush(QPixmap::fromImage(image));
     view -> setScene(scene);
 
     view -> show();
