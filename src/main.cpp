@@ -1,3 +1,4 @@
+#include "Player.h"
 #include "chess.h"
 
 #include "Game.h"
@@ -15,10 +16,18 @@ int main(int argc, char * argv[]) {
 
     Game game(Game::NORMAL, & w);
 
+    std::string playerType;
+
+
     game.start();
+
+
+
+
     w.initUI();
     w.show();
 
     return a.exec();
 
 }
+

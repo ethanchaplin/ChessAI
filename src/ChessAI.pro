@@ -13,9 +13,11 @@ CONFIG += console
 SOURCES += \
     Board.cpp \
     Game.cpp \
+    MoveCircleItem.cpp \
     Piece.cpp \
     PieceItem.cpp \
     Player.cpp \
+    SuperSickAI.cpp \
     main.cpp \
     chess.cpp
     Board.cpp
@@ -25,9 +27,11 @@ SOURCES += \
 HEADERS += \
     Board.h \
     Game.h \
+    MoveCircleItem.h \
     Piece.h \
     PieceItem.h \
     Player.h \
+    SuperSickAI.h \
     chess.h
     Board.h
     Game.h

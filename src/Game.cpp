@@ -19,10 +19,14 @@
 #include <algorithm>
 
 #include "PieceItem.h"
+#include "MoveCircleItem.h"
 Game::Game(Mode mode, MainWindow * mw) {
     board = new Board(true);
     this -> mw = mw;
-
+    this->image = QImage("C:\\Users\\coold\\Documents\\ChessAI\\assets\\board.png");
+    image = image.scaled(400, 400);
+    this->player1 = new Player(Player::PLAYER_1, Player::HUMAN, board);
+    this->player2 = new Player(Player::PLAYER_2, Player::SMOOTH_BRAIN, board);
     switch (mode) {
     case NORMAL:
         board -> setPiece(0, new Piece(Piece::BLACK, Piece::ROOK, 0));
@@ -93,11 +97,41 @@ MainWindow * Game::getWindow() {
     return mw;
 }
 
+
+void Game::movePiece(Piece * piece, int square){
+
+    board->movePiece(piece, square);
+    clearPieceMoves();
+    board->changeTurn();
+    drawPieces();
+    board->computeAllPiecesLegalMove();
+    changeTurn();
+
+}
+
+void Game::changeTurn(){
+    if(board->getTurn() == Board::T_WHITE){
+        if(player1->getType() == Player::SMOOTH_BRAIN){
+            std::vector<int> move = player1->aiMove();
+            movePiece(board->getPiece(move.at(0)), move.at(1));
+        }
+
+    }
+    else{
+        if(player2->getType() == Player::SMOOTH_BRAIN){
+            std::vector<int> move = player2->aiMove();
+            movePiece(board->getPiece(move.at(0)), move.at(1));
+        }
+    }
+}
+
+
 void Game::drawPieces() {
     QGraphicsScene * scene = new QGraphicsScene();
 
 
-
+    QGraphicsPixmapItem * pix = new QGraphicsPixmapItem(QPixmap::fromImage(image));
+    scene->addItem(pix);
 
 
 
@@ -178,7 +212,7 @@ void Game::showPieceMoves(Piece * currPiece){
         int x = currPiece->getLegalMoves()[i] % 8;
         int y = currPiece->getLegalMoves()[i] / 8;
 
-        QGraphicsEllipseItem * circle = new QGraphicsEllipseItem(12.5, 12.5, 25, 25);
+        QGraphicsEllipseItem * circle = new MoveCircleItem(12.5, 12.5, 25, 25, currPiece, this, x, y);
 
         circle -> setZValue(11);
         circle -> setPos((50 * x), (50 * y));

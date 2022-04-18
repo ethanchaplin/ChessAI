@@ -59,15 +59,23 @@ class Board {
     std::vector <int > getCheckMoves(Piece::Color color);
     std::vector <int > getCheckLines(Piece::Color color);
 
+    std::vector < Piece* > getBlackPieces();
+    std::vector < Piece * > getWhitePieces();
+
+    void updateColorPieceVectors();
+
 
     private:
-        Piece * pieceLocations[64];
+    Piece * pieceLocations[64];
     Turn turn = T_WHITE;
     std::vector < int > wCheckMoves;
     std::vector < int > bCheckMoves;
 
     std::vector < int > wCheckLines;
     std::vector < int > bCheckLines;
+
+    std::vector < Piece* > blackPieces;
+    std::vector < Piece * > whitePieces;
 
     bool real;
     bool wInCheck;

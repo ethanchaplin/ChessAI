@@ -30,6 +30,13 @@ Board::Board(bool real) {
 
 void Board::setPiece(int pos, Piece * piece) {
     pieceLocations[pos] = piece;
+
+    if(piece->getColor() == Piece::BLACK){
+        blackPieces.push_back(piece);
+    }
+    else{
+        whitePieces.push_back(piece);
+    }
 }
 
 Piece * Board::getPiece(int pos) {
@@ -42,7 +49,8 @@ Piece ** Board::getPieces() {
 
 Board::~Board() {
     for (int i = 0; i < 64; i++) {
-        delete pieceLocations[i];
+        if(pieceLocations[i] != nullptr)
+            delete pieceLocations[i];
 
     }
 }
@@ -226,8 +234,8 @@ void Board::computeAllPiecesLegalMove() {
 
                                 populateMoves.push_back(square - 8);
                                 //try moving two!!
-                                if (!doesMoveCauseCheck(square, square - 16)) {
-                                    if (pieceLocations[square - 16] == nullptr && !currPiece -> hasPreviouslyMoved()) {
+                                if (!doesMoveCauseCheck(square, square - 16) && !currPiece -> hasPreviouslyMoved()) {
+                                    if (pieceLocations[square - 16] == nullptr) {
                                         populateMoves.push_back(square - 16);
                                     }
                                 }
@@ -349,8 +357,8 @@ void Board::computeAllPiecesLegalMove() {
 
                                 populateMoves.push_back(square + 8);
                                 //try moving two!!
-                                if (!doesMoveCauseCheck(square, square + 16)) {
-                                    if (pieceLocations[square + 16] == nullptr && !currPiece -> hasPreviouslyMoved()) {
+                                if (!doesMoveCauseCheck(square, square + 16) && !currPiece -> hasPreviouslyMoved()) {
+                                    if (pieceLocations[square + 16] == nullptr) {
                                         populateMoves.push_back(square + 16);
                                     }
                                 }
@@ -411,7 +419,7 @@ void Board::computeAllPiecesLegalMove() {
 
                         //check if valid move
                         if (checkMove <= 63 && checkMove >= 0) {
-                            if(abs(checkMove % 8 - currPiece->getXPos()) == 1){
+                            if(abs(checkMove % 8 - currPiece->getXPos()) == j){
                             if ((
                                     (currPiece -> getXPos() == 0 && (i == 0 || i == 3)) || (currPiece -> getXPos() == 7 && (i == 1 || i == 2))) ||
                                 ((currPiece -> getYPos() == 0 && (i == 2 || i == 3)) || (currPiece -> getYPos() == 7 && (i == 0 || i == 1)))
@@ -622,15 +630,20 @@ void Board::computeAllPiecesLegalMove() {
                 for (int i = 0; i < 8; i++) {
                     int checkMove = square + kingMoves[i];
                     if (checkMove >= 0 && checkMove <= 63) {
+                        if(abs(checkMove % 8 - currPiece->getXPos()) <= 1 && abs((checkMove / 8) - currPiece->getYPos()) <= 1){
+
                         //if in check
                         if (find(checkMoves, square) || find(checkLines, square)) {
 
                             //try to move
-                            if (!find(checkMoves, checkMove) && !find(checkLines, checkMove) && !doesMoveCauseCheck(square, checkMove)) {
+                            if (!doesMoveCauseCheck(square, checkMove)) {
+
                                 if (pieceLocations[checkMove] != nullptr) {
                                     if (pieceLocations[checkMove] -> getColor() != currPiece -> getColor()) {
-                                        populateMoves.push_back(checkMove);
-                                        addCheckMoves(currPiece -> getColor(), checkMove);
+
+                                            populateMoves.push_back(checkMove);
+                                            addCheckMoves(currPiece -> getColor(), checkMove);
+
                                     }
 
                                     //delete all moves that don't protect king
@@ -659,6 +672,7 @@ void Board::computeAllPiecesLegalMove() {
                                     populateMoves.push_back(checkMove);
                                     addCheckMoves(currPiece -> getColor(), checkMove);
                                 }
+
                             } else {
                                 removeMove(populateMoves, checkMove);
                             }
@@ -669,39 +683,34 @@ void Board::computeAllPiecesLegalMove() {
                             if (!find(checkMoves, checkMove) && !find(checkLines, checkMove) && !doesMoveCauseCheck(square, checkMove)) {
                                 //check for castle!
                                 if(!currPiece->hasPreviouslyMoved()){
-                                for (int castleCheck = 2; castleCheck < 4; castleCheck++) {
 
-                                    if (square + castleCheck == 63) {
                                         if (pieceLocations[62] == nullptr && pieceLocations[61] == nullptr && pieceLocations[63] != nullptr) {
                                             if (pieceLocations[63] -> getType() == Piece::ROOK && pieceLocations[63] -> getColor() == currPiece -> getColor() && !pieceLocations[63] -> hasPreviouslyMoved()) {
                                                 populateMoves.push_back(62);
                                             }
                                         }
-                                    }
-                                    if (square + castleCheck == 7) {
+
                                         if (pieceLocations[6] == nullptr && pieceLocations[5] == nullptr && pieceLocations[4] == nullptr && pieceLocations[3] != nullptr) {
                                             if (pieceLocations[7] -> getType() == Piece::ROOK && pieceLocations[7] -> getColor() == currPiece -> getColor() && !pieceLocations[7] -> hasPreviouslyMoved()) {
                                                 populateMoves.push_back(5);
                                             }
                                         }
-                                    }
-                                    if (square - castleCheck == 0) {
+
                                         if (pieceLocations[2] == nullptr && pieceLocations[1] == nullptr && pieceLocations[0] != nullptr) {
                                             if (pieceLocations[0] -> getType() == Piece::ROOK && pieceLocations[0] -> getColor() == currPiece -> getColor() && !pieceLocations[0] -> hasPreviouslyMoved()) {
                                                 populateMoves.push_back(1);
                                             }
                                         }
-                                    }
-                                    if (square - castleCheck == 56) {
+
                                         if (pieceLocations[57] == nullptr && pieceLocations[58] == nullptr && pieceLocations[59] == nullptr && pieceLocations[56] != nullptr) {
                                             if (pieceLocations[56] -> getType() == Piece::ROOK && pieceLocations[56] -> getColor() == currPiece -> getColor() && !pieceLocations[56] -> hasPreviouslyMoved()) {
                                                 populateMoves.push_back(58);
                                             }
                                         }
-                                    }
+
 
                                 }
-                                }
+
 
                                 if (pieceLocations[checkMove] != nullptr) {
                                     if (pieceLocations[checkMove] -> getColor() != currPiece -> getColor()) {
@@ -721,6 +730,7 @@ void Board::computeAllPiecesLegalMove() {
                             }
                         }
                     }
+                }
                 }
                 currPiece -> populateLegalMoves(populateMoves);
                 populateMoves.clear();
@@ -1069,7 +1079,7 @@ void Board::computeAllMoves() {
 
                         //check if valid move
                         if (checkMove <= 63 && checkMove >= 0) {
-                            if(abs(checkMove % 8 - currPiece->getXPos()) == 1){
+                            if(abs(checkMove % 8 - currPiece->getXPos()) == j){
 
                             if ((
                                     (currPiece -> getXPos() == 0 && (i == 0 || i == 3)) || (currPiece -> getXPos() == 7 && (i == 1 || i == 2))) ||
@@ -1270,6 +1280,8 @@ void Board::computeAllMoves() {
                 for (int i = 0; i < 8; i++) {
                     int checkMove = square + kingMoves[i];
                     if (checkMove >= 0 && checkMove <= 63) {
+                        if(abs(checkMove % 8 - currPiece->getXPos()) <= 1 && abs((checkMove / 8) - currPiece->getYPos()) <= 1){
+
                         //if in check
                         if (find(checkMoves, square) || find(checkLines, square)) {
 
@@ -1368,6 +1380,7 @@ void Board::computeAllMoves() {
                             }
                         }
                     }
+                    }
                 }
                 currPiece -> populateLegalMoves(populateMoves);
                 populateMoves.clear();
@@ -1404,6 +1417,20 @@ void Board::movePiece(Piece * piece, int square) {
             pieceLocations[square] = piece;
             piece -> move(square);
             pieceLocations[oldSquare] = nullptr;
+        }
+
+        if (piece -> getType() == Piece::PAWN) {
+                    if (piece -> getColor() == Piece::WHITE) {
+
+                        if(square / 8 == 0){
+                            piece->setType(Piece::QUEEN);
+                        }
+                    }
+                    else{
+                        if(square / 8 == 7){
+                            piece->setType(Piece::QUEEN);
+                        }
+                    }
         }
 
     } else {
@@ -1472,8 +1499,15 @@ void Board::movePiece(Piece * piece, int square) {
         } else if (piece -> getType() == Piece::PAWN) {
             if (piece -> getColor() == Piece::WHITE) {
 
+                if(square / 8 == 0){
+                    piece->setType(Piece::QUEEN);
+                    piece -> move(square);
+                    pieceLocations[square] = piece;
+                    attack(oldSquare);
+                }
+
                 //first move double check
-                if (square == (oldSquare - 16)) {
+                else if (square == (oldSquare - 16)) {
                     piece -> move(square);
                     piece -> setPreviousPosition(65);
                     pieceLocations[square] = piece;
@@ -1495,8 +1529,14 @@ void Board::movePiece(Piece * piece, int square) {
                 }
             } else if (piece -> getColor() == Piece::BLACK) {
 
+                if(square / 8 == 7){
+                    piece->setType(Piece::QUEEN);
+                    piece -> move(square);
+                    pieceLocations[square] = piece;
+                    attack(oldSquare);
+                }
                 //first move double check
-                if (square == (oldSquare + 16)) {
+                else if (square == (oldSquare + 16)) {
                     piece -> move(square);
                     piece -> setPreviousPosition(65);
                     pieceLocations[square] = piece;
@@ -1527,6 +1567,8 @@ void Board::movePiece(Piece * piece, int square) {
     if (this -> real) {
         qDebug() << boardInCheck(piece -> getColor());
     }
+
+    updateColorPieceVectors();
 }
 
 void Board::attack(int square) {
@@ -1656,4 +1698,35 @@ bool Board::find(std::vector < int > vec, int square) {
 
 void Board::removeMove(std::vector<int>& vec, int square){
     vec.erase(std::remove(vec.begin(), vec.end(), square), vec.end());
+}
+
+std::vector < Piece* > Board::getBlackPieces(){
+    return blackPieces;
+}
+std::vector < Piece * > Board::getWhitePieces(){
+    return blackPieces;
+}
+
+void Board::updateColorPieceVectors(){
+
+    whitePieces.clear();
+    blackPieces.clear();
+
+    for(int i = 0; i < 64; i++){
+
+        if(pieceLocations[i] != nullptr){
+            if(pieceLocations[i]->getColor() == Piece::BLACK){
+                blackPieces.push_back(pieceLocations[i]);
+            }
+            else{
+                whitePieces.push_back(pieceLocations[i]);
+            }
+        }
+
+    }
+
+
+
+
+
 }

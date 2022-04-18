@@ -23,11 +23,9 @@ void PieceItem::mousePressEvent(QGraphicsSceneMouseEvent * event){
 
 
     if(piece != nullptr){
-        qDebug() << "{";
-        for(int i = 0; i < (int)piece->getLegalMoves().size(); i++){
-            qDebug() << piece->getLegalMoves()[i] << ",";
-        }
-        qDebug() << "}";
+            qDebug() << piece->getCompositePosition();
+
+
     game->showPieceMoves(piece);
     QGraphicsItem::mousePressEvent(event);
 }
@@ -74,11 +72,8 @@ void PieceItem::mouseReleaseEvent(QGraphicsSceneMouseEvent * event){
         if(piece->getLegalMoves()[i] == test){
             prevX = newX;
             prevY = newY;
-            game->getBoard()->movePiece(piece, test);
-            game->clearPieceMoves();
-            game->getBoard()->changeTurn();
-            game->drawPieces();
-            game->getBoard()->computeAllPiecesLegalMove();
+            game->movePiece(piece, test);
+
 
 
             break;

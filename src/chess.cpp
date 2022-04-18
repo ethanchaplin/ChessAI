@@ -43,10 +43,14 @@ void MainWindow::initUI() {
 
 
 
-    view->setBackgroundBrush(QPixmap::fromImage(image));
+//    view->setBackgroundBrush(QBrush(QPixmap::fromImage(image), Qt::NoBrush));
+    QGraphicsPixmapItem * pix = new QGraphicsPixmapItem(QPixmap::fromImage(image));
+    scene->addItem(pix);
     view -> setScene(scene);
 
     view -> show();
+
+
 
 }
 

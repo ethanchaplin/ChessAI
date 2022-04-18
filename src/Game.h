@@ -20,6 +20,8 @@
 #include "chess.h"
 #include <vector>
 
+#include "Player.h"
+
 class Game {
     public:
         enum Mode {
@@ -41,9 +43,16 @@ class Game {
     void refreshPieces();
     void showPieceMoves(Piece * currPiece);
     void clearPieceMoves();
+    void movePiece(Piece * piece, int square);
+    void changeTurn();
     private:
         Board * board;
     MainWindow * mw;
+
+    Player* player1;
+    Player* player2;
+
+    QImage image;
 
 };
 
