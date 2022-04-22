@@ -20,13 +20,15 @@
 
 #include "PieceItem.h"
 #include "MoveCircleItem.h"
-Game::Game(Mode mode, MainWindow * mw) {
+
+Game::Game(Mode mode, MainWindow * mw, int playerone, int playertwo) {
     board = new Board(true);
     this -> mw = mw;
-    this->image = QImage("C:\\Users\\coold\\Documents\\ChessAI\\assets\\board.png");
+    this->active = true;
+    this->image = QImage(mw->mainDir + "\\assets\\board.png");
     image = image.scaled(400, 400);
-    this->player1 = new Player(Player::PLAYER_1, Player::HUMAN, board);
-    this->player2 = new Player(Player::PLAYER_2, Player::SMOOTH_BRAIN, board);
+    this->player1 = new Player(Player::PLAYER_1, static_cast<Player::PlayerType>(playerone), board);
+    this->player2 = new Player(Player::PLAYER_2, static_cast<Player::PlayerType>(playertwo), board);
     switch (mode) {
     case NORMAL:
         board -> setPiece(0, new Piece(Piece::BLACK, Piece::ROOK, 0));
@@ -87,6 +89,24 @@ void Game::start() {
 
     drawPieces();
     board -> computeAllPiecesLegalMove();
+    QCoreApplication::processEvents();
+
+    if(player1->getType() == Player::SMOOTH_BRAIN){
+        std::vector<int> move = player1->aiMove();
+
+        if(!move.empty()){
+            movePiece(board->getPiece(move.at(0)), move.at(1));
+        }
+    }
+
+    if(player1->getType() == Player::ROBOT){
+        std::vector<int> move = player1->negaMove();
+
+        if(!move.empty()){
+            movePiece(board->getPiece(move.at(0)), move.at(1));
+        }
+    }
+
 }
 
 Board * Game::getBoard() {
@@ -99,28 +119,144 @@ MainWindow * Game::getWindow() {
 
 
 void Game::movePiece(Piece * piece, int square){
+    QCoreApplication::processEvents();
 
     board->movePiece(piece, square);
     clearPieceMoves();
+
     board->changeTurn();
     drawPieces();
     board->computeAllPiecesLegalMove();
     changeTurn();
 
+
 }
 
 void Game::changeTurn(){
+    bool canMove = false;
+
     if(board->getTurn() == Board::T_WHITE){
         if(player1->getType() == Player::SMOOTH_BRAIN){
             std::vector<int> move = player1->aiMove();
-            movePiece(board->getPiece(move.at(0)), move.at(1));
+
+            if(!move.empty()){
+                movePiece(board->getPiece(move.at(0)), move.at(1));
+            }
+            else{
+                if(!board->boardInCheck(Piece::WHITE)){
+                qDebug() << "stalemate";
+                active = false;
+                }
+                else{
+               qDebug() << "player 2 checkmate!";
+               active = false;
+                }
+            }
+
+
         }
+        else if(player1->getType() == Player::ROBOT){
+            std::vector<int> move = player1->negaMove();
+
+            if(!move.empty()){
+                movePiece(board->getPiece(move.at(0)), move.at(1));
+            }
+            else{
+                if(!board->boardInCheck(Piece::WHITE)){
+                qDebug() << "stalemate";
+                active = false;
+                }
+                else{
+               qDebug() << "player 2 checkmate!";
+               active = false;
+                }
+            }
+
+
+        }
+        else{
+
+            for(int i = 0; i < (int)board->getWhitePieces().size(); i++){
+                if(board->getWhitePieces().at(i)->canMove()){
+                    canMove = true;
+                    break;
+
+
+                }
+
+            }
+
+            if(!canMove){
+                if(!board->boardInCheck(Piece::WHITE)){
+                qDebug() << "stalemate";
+                active = false;
+                }
+                else{
+               qDebug() << "player 2 checkmate!";
+               active = false;
+                }
+            }
+        }
+
 
     }
     else{
+
         if(player2->getType() == Player::SMOOTH_BRAIN){
             std::vector<int> move = player2->aiMove();
+            if(!move.empty()){
             movePiece(board->getPiece(move.at(0)), move.at(1));
+            }
+            else{
+                if(!board->boardInCheck(Piece::BLACK)){
+                 //draw by stalemate
+                    qDebug() << "stalemate";
+                    active = false;
+                }
+                else{
+                qDebug() << "player 1 checkmate";
+                active = false;
+                }
+            }
+        }
+
+        else if(player2->getType() == Player::ROBOT){
+            std::vector<int> move = player2->negaMove();
+            if(!move.empty()){
+            movePiece(board->getPiece(move.at(0)), move.at(1));
+            }
+            else{
+                if(!board->boardInCheck(Piece::BLACK)){
+                 //draw by stalemate
+                    qDebug() << "stalemate";
+                    active = false;
+                }
+                else{
+                qDebug() << "player 1 checkmate";
+                active = false;
+                }
+            }
+        }
+        else{
+
+            for(int i = 0; i < (int)board->getBlackPieces().size(); i++){
+                if(board->getBlackPieces().at(i)->canMove()){
+                    canMove = true;
+                    break;
+                }
+
+            }
+
+            if(!canMove){
+                if(!board->boardInCheck(Piece::BLACK)){
+                qDebug() << "stalemate";
+                active = false;
+                }
+                else{
+                qDebug() << "player 1 checkmate!";
+                active = false;
+                }
+            }
         }
     }
 }
@@ -171,7 +307,7 @@ void Game::drawPieces() {
 
             }
 
-            QString qstr = QString::fromStdString("C:\\Users\\coold\\Documents\\ChessAI\\assets\\" + name + color + ".png");
+            QString qstr = QString::fromStdString(mw->mainDir.toStdString() + "\\assets\\" + name + color + ".png");
             QImage image(qstr);
             image = image.scaled(50, 50);
 
@@ -195,12 +331,13 @@ void Game::drawPieces() {
                 board->getTurn() == Board::T_BLACK ? item->setFlags({QGraphicsItem::ItemIsMovable, QGraphicsItem::ItemIsSelectable}) : item->setFlags({});
             }
 
+
             scene->addItem(item);
 
 
         }
     }
-
+    QCoreApplication::processEvents();
     mw->updateUI(scene);
 
 }
@@ -304,5 +441,6 @@ void Game::clearPieceMoves(){
     mw->updateUI(basicScene);
 }
 
-
-
+bool Game::isActive(){
+    return active;
+}

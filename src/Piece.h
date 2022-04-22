@@ -14,8 +14,8 @@ class Piece {
 
     public:
         enum Color {
-            BLACK,
-            WHITE
+            BLACK = -1,
+            WHITE = 1
         };
     enum Type {
         PAWN,
@@ -28,16 +28,17 @@ class Piece {
 
     Piece(Color color, Type type, int pos);
     Piece(Piece * piece){
-        color = piece->color;
-        type = piece->type;
-        pos = piece->pos;
-        legalMoves=piece->legalMoves;
-        previousPos = piece->previousPos;
+        this->color = piece->color;
+        this->type = piece->type;
+        this->pos = piece->pos;
+        this->legalMoves=piece->legalMoves;
+        this->previousPos = piece->previousPos;
     }
-    virtual~Piece();
+    ~Piece();
     void move(int square);
 
     Piece* operator=(const Piece *p){
+
     Piece * piece = new Piece(p->color, p->type, p->pos);
 
     piece->legalMoves = p->legalMoves;
@@ -63,7 +64,7 @@ class Piece {
     bool hasPreviouslyMoved();
     void setPreviousPosition(int square);
     void setType(Type type);
-
+    bool canMove();
 
     private:
         Color color;

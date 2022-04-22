@@ -11,6 +11,7 @@ MainWindow::MainWindow(QWidget * parent): QMainWindow(parent), ui(new Ui::MainWi
     ui -> setupUi(this);
     scene = new QGraphicsScene();
     view = this -> findChild < QGraphicsView * > ("graphicsView");
+    mainDir = QCoreApplication::applicationDirPath();
 }
 
 MainWindow::~MainWindow() {
@@ -29,15 +30,18 @@ void MainWindow::showEvent(QShowEvent * event) {
 }
 
 void MainWindow::updateUI(QGraphicsScene * scene) {
-    this -> scene = scene;
-    view -> setScene(this -> scene);
 
+
+    this->scene = scene;
+
+    view -> setScene(scene);
     view -> show();
+
 }
 
 void MainWindow::initUI() {
 
-    QImage image("C:\\Users\\coold\\Documents\\ChessAI\\assets\\board.png");
+    QImage image(mainDir + "\\assets\\board.png");
     image = image.scaled(400, 400);
 
 

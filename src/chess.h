@@ -24,9 +24,11 @@ class MainWindow: public QMainWindow {
     void updateUI(QGraphicsScene * scene);
     QGraphicsScene * getScene();
     void initUI();
+    QString mainDir;
     private:
         Ui::MainWindow * ui;
     QGraphicsView * view;
     QGraphicsScene * scene;
+
 };
 #endif // MAINWINDOW_H

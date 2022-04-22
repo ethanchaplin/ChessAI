@@ -3,6 +3,9 @@
 #include "Piece.h"
 #include <cstdlib>
 #include <QThread>
+#include <thread>
+#include "SuperSickAI.h"
+using namespace std::chrono_literals;
 Player::Player(PlayerTurn turn, PlayerType type, Board * board)
 {
     this->turn = turn;
@@ -26,8 +29,9 @@ Board * Player::getBoard(){
 
 std::vector<int> Player::aiMove(){
 
-
+        std::this_thread::sleep_for(100ms);
         std::vector<int> move;
+        bool canMove = false;
 
         srand(time(NULL));
         std::vector<Piece*> getPieces;
@@ -37,6 +41,15 @@ std::vector<int> Player::aiMove(){
         else{
             getPieces = board->getBlackPieces();
         }
+
+        for (int j  = 0; j < (int)getPieces.size(); j++){
+            if(getPieces.at(j)->canMove()){
+                canMove = true;
+            }
+        }
+
+        if(canMove){
+
         int randomPiece = rand() % getPieces.size();
 
         while(getPieces.at(randomPiece)->getLegalMoves().size() == 0){
@@ -48,12 +61,22 @@ std::vector<int> Player::aiMove(){
 
         move.push_back(getPieces.at(randomPiece)->getCompositePosition());
         move.push_back(getPieces.at(randomPiece)->getLegalMoves().at(randomMove));
+        }
+        else{
+            move.clear();
+        }
+
         return move;
 
 
     }
 
+std::vector<int> Player::negaMove(){
+    SuperSickAI s;
 
+    std::vector<int> bestMove = s.getBestMove(board, turn==Player::PLAYER_1 ? Piece::WHITE : Piece::BLACK, 2);
+    return {bestMove.at(0), bestMove.at(1)};
+}
 
 
 

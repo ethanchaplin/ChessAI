@@ -41,6 +41,7 @@ class Board {
     }
     Piece * getPiece(int pos);
     Piece ** getPieces();
+    std::vector <Piece* > getPieces(Piece::Color color);
 
     void setPiece(int pos, Piece * piece);
     virtual~Board();
@@ -58,13 +59,18 @@ class Board {
     void removeMove(std::vector<int>& vec, int move);
     std::vector <int > getCheckMoves(Piece::Color color);
     std::vector <int > getCheckLines(Piece::Color color);
-
+    float evaluate(Piece::Color);
     std::vector < Piece* > getBlackPieces();
     std::vector < Piece * > getWhitePieces();
-
+    bool checkmate(Piece::Color color);
     void updateColorPieceVectors();
+    int numPieces(Piece::Color color, Piece::Type type);
+
+    int numPiecesOpposite(Piece::Color color, Piece::Type type);
 
 
+    int numMoves(Piece::Color);
+    int numMovesOpposite(Piece::Color);
     private:
     Piece * pieceLocations[64];
     Turn turn = T_WHITE;

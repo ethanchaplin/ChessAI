@@ -16,6 +16,8 @@ Piece::Piece(Color color, Type type, int pos) {
 
 }
 
+
+
 Piece::~Piece() {
     // TODO Auto-generated destructor stub
 }
@@ -88,5 +90,6 @@ void Piece::setPreviousPosition(int square){
     previousPos = square;
 }
 
-
-
+bool Piece::canMove(){
+    return !legalMoves.empty();
+}

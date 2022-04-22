@@ -4,12 +4,14 @@
 
 #include "Board.h"
 #include <vector>
+#include <map>
 class SuperSickAI
 {
 public:
     SuperSickAI();
     ~SuperSickAI();
-    std::vector<int> getBestMove(Board * b);
+    static std::vector<int> getBestMove(Board * b, Piece::Color color, int depth);
+    static int negamax(Board *b, int color, int depth);
 
 };
 

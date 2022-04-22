@@ -2,6 +2,7 @@
 #include "QGraphicsSceneMouseEvent"
 #include <algorithm>
 #include <QDebug>
+#include "Game.h"
 PieceItem::PieceItem(const QPixmap &pixmap, Piece* piece, Game * game)
 {
 
@@ -22,9 +23,7 @@ PieceItem::~PieceItem(){
 void PieceItem::mousePressEvent(QGraphicsSceneMouseEvent * event){
 
 
-    if(piece != nullptr){
-            qDebug() << piece->getCompositePosition();
-
+    if(piece != nullptr && game->isActive()){
 
     game->showPieceMoves(piece);
     QGraphicsItem::mousePressEvent(event);
@@ -39,6 +38,7 @@ void PieceItem::mouseMoveEvent(QGraphicsSceneMouseEvent * event){
 }
 void PieceItem::mouseReleaseEvent(QGraphicsSceneMouseEvent * event){
 
+    if(game->isActive()){
     if(piece != nullptr){
 
     int prevX = (int)piece->getXPos()*50;
@@ -92,6 +92,7 @@ void PieceItem::mouseReleaseEvent(QGraphicsSceneMouseEvent * event){
     }
     QGraphicsItem::mouseReleaseEvent(event);
 }
+    }
 }
 
 Piece * PieceItem::getPiece(){
